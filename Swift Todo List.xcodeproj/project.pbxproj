@@ -20,6 +20,7 @@
 		F8240D01274AB8EA0051C30B /* TaskListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8240D00274AB8EA0051C30B /* TaskListTableViewCell.swift */; };
 		F8240D03274AB8F60051C30B /* ListSectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8240D02274AB8F60051C30B /* ListSectionViewController.swift */; };
 		F8240D05274AB91D0051C30B /* ManageListsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8240D04274AB91D0051C30B /* ManageListsViewController.swift */; };
+		F8240D08274AD4770051C30B /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8240D07274AD4770051C30B /* Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +41,7 @@
 		F8240D00274AB8EA0051C30B /* TaskListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListTableViewCell.swift; sourceTree = "<group>"; };
 		F8240D02274AB8F60051C30B /* ListSectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListSectionViewController.swift; sourceTree = "<group>"; };
 		F8240D04274AB91D0051C30B /* ManageListsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageListsViewController.swift; sourceTree = "<group>"; };
+		F8240D07274AD4770051C30B /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +110,7 @@
 				F8240CEA274AA3330051C30B /* Assets.xcassets */,
 				F8240CEF274AA3330051C30B /* Info.plist */,
 				F8240CFA274AB5250051C30B /* ApiManager.swift */,
+				F8240D07274AD4770051C30B /* Extensions.swift */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -277,6 +280,7 @@
 				F8240D05274AB91D0051C30B /* ManageListsViewController.swift in Sources */,
 				F8240D03274AB8F60051C30B /* ListSectionViewController.swift in Sources */,
 				F8240CFF274AB8C50051C30B /* AddTaskViewController.swift in Sources */,
+				F8240D08274AD4770051C30B /* Extensions.swift in Sources */,
 				F8240CE6274AA3320051C30B /* MainViewController.swift in Sources */,
 				F8240CE2274AA3320051C30B /* AppDelegate.swift in Sources */,
 				F8240CE4274AA3320051C30B /* SceneDelegate.swift in Sources */,

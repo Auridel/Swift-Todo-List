@@ -24,11 +24,18 @@ class MainViewController: UIViewController {
         super.viewDidLoad()
         
         configureView()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
         fetchModels()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        
+        tableView.frame = view.bounds
     }
     
     // MARK: Actions
@@ -54,10 +61,14 @@ class MainViewController: UIViewController {
     }
     
     private func fetchModels() {
-        guard let models = ApiManager.shared.getLists() else {
-            return
+        
+        ApiManager.shared.getLists { models in
+            DispatchQueue.main.async {
+                self.listsModels = models
+                self.tableView.reloadData()
+            }
         }
-        listsModels = models
+        
     }
 }
 
@@ -66,18 +77,24 @@ class MainViewController: UIViewController {
 extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return listsModels.count
+        return 1
+//        return listsModels.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return listsModels[section].todos.count
+        return listsModels.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: TaskListTableViewCell.identifier,
                                                  for: indexPath) as! TaskListTableViewCell
+        cell.configure(with: listsModels[indexPath.row])
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
 }
