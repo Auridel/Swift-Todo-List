@@ -13,17 +13,20 @@ class TaskListTableViewCell: UITableViewCell {
     
     private var model: ListModel?
     
-    private let listLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .label
-        label.font = .systemFont(ofSize: 18, weight: .semibold)
-        return label
+    private let tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.isScrollEnabled = false
+        tableView.register(TaskTableViewCell.self,
+                           forCellReuseIdentifier: TaskTableViewCell.identifier)
+        return tableView
     }()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        contentView.addSubview(listLabel)
+        contentView.addSubview(tableView)
+        tableView.delegate = self
+        tableView.dataSource = self
     }
     
     required init?(coder: NSCoder) {
@@ -33,20 +36,56 @@ class TaskListTableViewCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        listLabel.frame = CGRect(x: 16,
-                                 y: 0,
-                                 width: contentView.width - 32,
-                                 height: contentView.height)
+        tableView.frame = contentView.bounds
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
         self.model = nil
-        listLabel.text = nil
+    }
+    
+    private func sortTodos(_ todos: [TodoModel]) -> [TodoModel] {
+        return todos.sorted { $0.checked && !$1.checked }
     }
     
     public func configure(with model: ListModel){
         self.model = model
-        listLabel.text = model.title
+        guard let todos = self.model?.todos else {
+            return
+        }
+        self.model?.todos = sortTodos(todos)
     }
+}
+
+// MARK: TableView
+
+extension TaskListTableViewCell: UITableViewDelegate, UITableViewDataSource {
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return model?.todos.count ?? 0 + 1
+    }
+    
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let task = model?.todos[indexPath.row] else {
+            return UITableViewCell()
+        }
+        let cell = tableView.dequeueReusableCell(withIdentifier: TaskTableViewCell.identifier,
+                                                 for: indexPath) as! TaskTableViewCell
+        cell.configure(with: task)
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 46
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
 }
