@@ -65,7 +65,14 @@ class TaskTableViewCell: UITableViewCell {
     
     public func configure(with task: TodoModel) {
         self.model = task
-        taskLabel.text = task.text
+        taskLabel.textColor = .label.withAlphaComponent(task.checked ? 0.38 : 0.87)
+        if task.checked {
+            let attributedString = NSMutableAttributedString(string: task.text)
+            attributedString.addAttribute(NSAttributedString.Key.strikethroughStyle, value: 1, range: NSRange.init(location: 0, length: attributedString.length))
+            taskLabel.attributedText = attributedString
+        } else {
+            taskLabel.text = task.text
+        }
         statusImage.image = UIImage(systemName: task.checked ? "checkmark" : "circle")
         statusImage.tintColor = task.checked ? .systemBlue : .label.withAlphaComponent(0.38)
     }

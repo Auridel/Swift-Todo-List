@@ -72,7 +72,7 @@ class MainViewController: UIViewController {
     }
 }
 
-// MARK: TableView Delegate
+// MARK: TableView
 
 extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     

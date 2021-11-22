@@ -42,7 +42,8 @@ public class ApiManager {
     }
     
     public func deleteList(with id: String, completion: ((Bool) -> Void)?) {
-        AF.request("\(baseURL)/list/\(id)", method: .delete)
+        AF.request("\(baseURL)/list/\(id)",
+                   method: .delete)
             .validate()
             .response { dataResponse in
                 switch dataResponse.result {
@@ -64,7 +65,9 @@ public class ApiManager {
     }
     
     public func patchList(with id: String, and title: String, completion: ((Bool) -> Void)?) {
-        AF.request("\(baseURL)/list/\(id)", method: .patch, parameters: ["title": title])
+        AF.request("\(baseURL)/list/\(id)",
+                   method: .patch,
+                   parameters: ["title": title])
             .validate()
             .response { dataResponse in
                 switch dataResponse.result {
@@ -84,7 +87,9 @@ public class ApiManager {
     }
     
     public func createTodo(for listId: Int, with text: String, and checked: Bool, completion: @escaping ((TodoModel?) -> Void)) {
-        AF.request("\(baseURL)/list/\(listId)", method: .post, parameters: ["text": text, "checked": checked])
+        AF.request("\(baseURL)/list/\(listId)",
+                   method: .post,
+                   parameters: ["text": text, "checked": checked])
             .validate()
             .responseJSON { dataResponse in
                 switch dataResponse.result {
@@ -106,7 +111,9 @@ public class ApiManager {
     }
     
     public func editTodo(for listId: Int, and todoId: Int, with text: String, and checked: Bool, completion: @escaping ((TodoModel?) -> Void)) {
-        AF.request("\(baseURL)/list/\(listId)/todo/\(todoId)", method: .patch, parameters: ["text": text, "checked": checked])
+        AF.request("\(baseURL)/list/\(listId)/todo/\(todoId)",
+                   method: .patch,
+                   parameters: ["text": text, "checked": checked])
             .validate()
             .responseJSON { dataResponse in
                 switch dataResponse.result {
@@ -128,7 +135,8 @@ public class ApiManager {
     }
     
     public func removeTodo(for listId: Int, and todoId: Int, completion: ((Bool) -> Void)?) {
-        AF.request("\(baseURL)/list/\(listId)/todo/\(todoId)", method: .delete)
+        AF.request("\(baseURL)/list/\(listId)/todo/\(todoId)",
+                   method: .delete)
             .validate()
             .responseJSON { dataResponse in
                 switch dataResponse.result {

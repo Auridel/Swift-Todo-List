@@ -3,7 +3,7 @@
 //  Swift Todo List
 //
 //  Created by Олег Ефимов on 21.11.2021.
-//
+// 46
 
 import UIKit
 
@@ -13,14 +13,25 @@ class TaskListTableViewCell: UITableViewCell {
     
     private var model: ListModel?
     
+    private struct Constants {
+        static let shared = Constants()
+        
+        let taskHeight: CGFloat = 46
+    }
+    
+    private var completedTodos = [TodoModel]()
+    
+    private var uncompletedTodos = [TodoModel]()
+    
     private let tableView: UITableView = {
-        let tableView = UITableView()
+        let tableView = UITableView(frame: .zero, style: .plain)
         tableView.isScrollEnabled = false
         tableView.register(TaskTableViewCell.self,
                            forCellReuseIdentifier: TaskTableViewCell.identifier)
+        tableView.sectionHeaderTopPadding = 0
         return tableView
     }()
-
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -41,19 +52,22 @@ class TaskListTableViewCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        self.model = nil
+        model = nil
+        completedTodos = []
+        uncompletedTodos = []
     }
     
-    private func sortTodos(_ todos: [TodoModel]) -> [TodoModel] {
-        return todos.sorted { $0.checked && !$1.checked }
-    }
+    
     
     public func configure(with model: ListModel){
         self.model = model
-        guard let todos = self.model?.todos else {
-            return
+        for todo in model.todos {
+            if(todo.checked) {
+                completedTodos.append(todo)
+            } else {
+                uncompletedTodos.append(todo)
+            }
         }
-        self.model?.todos = sortTodos(todos)
     }
 }
 
@@ -62,30 +76,68 @@ class TaskListTableViewCell: UITableViewCell {
 extension TaskListTableViewCell: UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return model?.todos.count ?? 0 > 0 ? 3 : 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return model?.todos.count ?? 0 + 1
+        guard model?.todos.count ?? 0 > 0 else {
+            return 0
+        }
+        if section == 0 {
+            return uncompletedTodos.count
+        } else if section == 1 {
+            return 0
+        } else {
+            return completedTodos.count
+        }
     }
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let task = model?.todos[indexPath.row] else {
-            return UITableViewCell()
-        }
+        let hasTodos = model?.todos.count ?? 0 > 0
         let cell = tableView.dequeueReusableCell(withIdentifier: TaskTableViewCell.identifier,
                                                  for: indexPath) as! TaskTableViewCell
-        cell.configure(with: task)
+        if hasTodos == true {
+            if indexPath.section == 0 {
+                cell.configure(with: uncompletedTodos[indexPath.row])
+            } else if indexPath.section == 2 {
+                cell.configure(with: completedTodos[indexPath.row])
+            }
+        }
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 46
+        
+        return Constants.shared.taskHeight
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let hasTodos = model?.todos.count ?? 0 > 0
+        if (hasTodos && section == 1) || !hasTodos {
+            return StatusSeparatorView()
+        }
+        return nil
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        let hasTodos = model?.todos.count ?? 0 > 0
+        if (hasTodos && section == 1) || !hasTodos {
+            return Constants.shared.taskHeight
+        }
+        return 0
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return .leastNormalMagnitude
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return nil
+    }
+
 }
