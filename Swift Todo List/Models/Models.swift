@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ListModel: Codable {
+public class ListModel: Codable {
     let id: Int
     let title: String
     let candidate_id: Int
@@ -17,7 +17,7 @@ public struct ListModel: Codable {
     
 }
 
-public struct TodoModel: Codable {
+public class TodoModel: Codable {
     let id: Int
     let text: String
     let list_id: Int

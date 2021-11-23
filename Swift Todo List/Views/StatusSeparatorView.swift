@@ -7,9 +7,17 @@
 
 import UIKit
 
+protocol StatusSeparatorViewDelegate: AnyObject {
+    func didTapExpandCompleted()
+}
+
 class StatusSeparatorView: UIView {
 
     private var isExpanded = false
+    
+    public weak var delegate: StatusSeparatorViewDelegate?
+    
+    public var listId: Int?
     
     private let separatorLabel: UILabel = {
         let label = UILabel()
@@ -32,6 +40,11 @@ class StatusSeparatorView: UIView {
         self.backgroundColor = .systemBackground
         self.addSubview(separatorLabel)
         self.addSubview(separatorImage)
+        
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(didTapSeparator))
+        gesture.numberOfTouchesRequired = 1
+        gesture.numberOfTapsRequired = 1
+        self.addGestureRecognizer(gesture)
     }
     
     required init?(coder: NSCoder) {
@@ -55,5 +68,8 @@ class StatusSeparatorView: UIView {
                                  height: contentSize)
     }
 
+    @objc private func didTapSeparator() {
+        delegate?.didTapExpandCompleted()
+    }
 
 }

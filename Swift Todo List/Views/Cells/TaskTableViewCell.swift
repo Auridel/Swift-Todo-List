@@ -44,6 +44,7 @@ class TaskTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         taskLabel.text = nil
+        taskLabel.attributedText = nil
         statusImage.image = nil
     }
     
@@ -68,7 +69,7 @@ class TaskTableViewCell: UITableViewCell {
         taskLabel.textColor = .label.withAlphaComponent(task.checked ? 0.38 : 0.87)
         if task.checked {
             let attributedString = NSMutableAttributedString(string: task.text)
-            attributedString.addAttribute(NSAttributedString.Key.strikethroughStyle, value: 1, range: NSRange.init(location: 0, length: attributedString.length))
+//            attributedString.addAttribute(NSAttributedString.Key.strikethroughStyle, value: 1, range: NSRange.init(location: 0, length: attributedString.length))
             taskLabel.attributedText = attributedString
         } else {
             taskLabel.text = task.text
