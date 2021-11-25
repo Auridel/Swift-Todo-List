@@ -51,6 +51,7 @@ class MainViewController: UIViewController {
     
     @objc private func didTapAddTaskButton() {
         let addTaskVC = AddTaskViewController()
+        addTaskVC.configure(with: nil, and: listsModels)
         navigationController?.pushViewController(addTaskVC, animated: true)
     }
     
@@ -139,8 +140,9 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let task = listsModels[indexPath.section].todos[indexPath.row]
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
-            ApiManager.shared.removeTodo(for: task.list_id, and: task.id) { isSuccess in
+            ApiManager.shared.removeTodo(for: task.list_id, and: task.id) { [weak self] isSuccess in
                 if isSuccess {
+                    guard let self = self else { return }
                     self.listsModels[indexPath.section].todos.remove(at: indexPath.row)
                     DispatchQueue.main.async {
                         tableView.deleteRows(at: [indexPath], with: .automatic)
@@ -155,7 +157,10 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let task = listsModels[indexPath.section].todos[indexPath.row]
         let editAction = UIContextualAction(style: .normal, title: "Edit") { _, _, isDone in
-            print("Edit")
+            let addTaskVC = AddTaskViewController()
+            addTaskVC.configure(with: task, and: self.listsModels)
+            self.navigationController?.pushViewController(addTaskVC,
+                                                     animated: true)
             isDone(true)
         }
         editAction.backgroundColor = .systemBlue

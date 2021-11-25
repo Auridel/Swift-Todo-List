@@ -19,6 +19,7 @@
 		F8240CFF274AB8C50051C30B /* AddTaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8240CFE274AB8C50051C30B /* AddTaskViewController.swift */; };
 		F8240D05274AB91D0051C30B /* ManageListsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8240D04274AB91D0051C30B /* ManageListsViewController.swift */; };
 		F8240D08274AD4770051C30B /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8240D07274AD4770051C30B /* Extensions.swift */; };
+		F834CA66275029B000991EC1 /* CategoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F834CA65275029B000991EC1 /* CategoryTableViewCell.swift */; };
 		F8642C22274C107C0084C392 /* ListSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8642C21274C107C0084C392 /* ListSectionHeaderView.swift */; };
 		F8642C24274C16630084C392 /* TaskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8642C23274C16630084C392 /* TaskTableViewCell.swift */; };
 /* End PBXBuildFile section */
@@ -40,6 +41,7 @@
 		F8240CFE274AB8C50051C30B /* AddTaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskViewController.swift; sourceTree = "<group>"; };
 		F8240D04274AB91D0051C30B /* ManageListsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageListsViewController.swift; sourceTree = "<group>"; };
 		F8240D07274AD4770051C30B /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		F834CA65275029B000991EC1 /* CategoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTableViewCell.swift; sourceTree = "<group>"; };
 		F8642C21274C107C0084C392 /* ListSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListSectionHeaderView.swift; sourceTree = "<group>"; };
 		F8642C23274C16630084C392 /* TaskTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -156,6 +158,7 @@
 			isa = PBXGroup;
 			children = (
 				F8642C23274C16630084C392 /* TaskTableViewCell.swift */,
+				F834CA65275029B000991EC1 /* CategoryTableViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -281,6 +284,7 @@
 				F8240D05274AB91D0051C30B /* ManageListsViewController.swift in Sources */,
 				F8240CFF274AB8C50051C30B /* AddTaskViewController.swift in Sources */,
 				F8240D08274AD4770051C30B /* Extensions.swift in Sources */,
+				F834CA66275029B000991EC1 /* CategoryTableViewCell.swift in Sources */,
 				F8240CE6274AA3320051C30B /* MainViewController.swift in Sources */,
 				F8240CE2274AA3320051C30B /* AppDelegate.swift in Sources */,
 				F8240CE4274AA3320051C30B /* SceneDelegate.swift in Sources */,

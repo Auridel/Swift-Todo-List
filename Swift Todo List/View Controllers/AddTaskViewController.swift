@@ -28,15 +28,25 @@ class AddTaskViewController: UIViewController {
     
     private let taskTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Enter task"
+        textField.placeholder = "Task Name"
+        textField.font = .systemFont(ofSize: 22)
         return textField
     }()
     
     private let categoryLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 18, weight: .semibold)
+        label.font = .systemFont(ofSize: 18,
+                                 weight: .bold)
         label.textColor = .label.withAlphaComponent(0.54)
+        label.text = "Categories"
         return label
+    }()
+    
+    private let tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.register(CategoryTableViewCell.self,
+                           forCellReuseIdentifier: CategoryTableViewCell.identifier)
+        return tableView
     }()
     
     override func viewDidLoad() {
@@ -44,6 +54,33 @@ class AddTaskViewController: UIViewController {
         
         view.backgroundColor = .systemBackground
         configureNavigationBar()
+        view.addSubview(taskTextField)
+        view.addSubview(categoryLabel)
+        view.addSubview(tableView)
+        
+        tableView.delegate = self
+        tableView.dataSource = self
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        configureViews()
+    }
+    
+    private func configureViews() {
+        taskTextField.frame = CGRect(x: 16,
+                                     y: view.safeAreaInsets.top + 16,
+                                     width: view.width - 32,
+                                     height: 24)
+        categoryLabel.frame = CGRect(x: 16,
+                                     y: taskTextField.bottom + 32,
+                                     width: view.width - 32,
+                                     height: 20)
+        tableView.frame = CGRect(x: view.left,
+                                 y: categoryLabel.bottom + 16,
+                                 width: view.width,
+                                 height: view.width - categoryLabel.bottom - 16)
     }
     
     private func configureNavigationBar(){
@@ -62,8 +99,9 @@ class AddTaskViewController: UIViewController {
         navigationItem.rightBarButtonItem = doneBarButton
     }
     
-    public func configure(with model: TodoModel) {
+    public func configure(with model: TodoModel?, and lists: [ListModel]) {
         self.taskModel = model
+        self.lists = lists
     }
     
     private func dismissVC() {
@@ -87,8 +125,8 @@ class AddTaskViewController: UIViewController {
             }
             ApiManager.shared.createTodo(for: listId,
                                             with: text,
-                                            and: false) { model in
-                if let task = model {
+                                            and: false) { [weak self] model in
+                if let task = model, let self = self {
                     self.delegate?.completeTask(with: .create(task: task))
                 }
             }
@@ -102,9 +140,13 @@ class AddTaskViewController: UIViewController {
                 return
             }
             if listId != taskModel.list_id {
-                ApiManager.shared.removeTodo(for: taskModel.list_id, and: taskModel.id, completion: nil)
-                ApiManager.shared.createTodo(for: listId, with: text, and: false) { todo in
-                    if let todo = todo {
+                ApiManager.shared.removeTodo(for: taskModel.list_id,
+                                                and: taskModel.id,
+                                                completion: nil)
+                ApiManager.shared.createTodo(for: listId,
+                                                with: text,
+                                                and: false) { [weak self] todo in
+                    if let todo = todo, let self = self {
                         self.delegate?.completeTask(with: .create(task: todo))
                     }
                 }
@@ -112,8 +154,8 @@ class AddTaskViewController: UIViewController {
                 ApiManager.shared.editTodo(for: listId,
                                               and: taskModel.id,
                                               with: text,
-                                              and: taskModel.checked) { todo in
-                    if let todo = todo {
+                                              and: taskModel.checked) {[weak self] todo in
+                    if let todo = todo, let self = self {
                         self.delegate?.completeTask(with: .update(task: todo))
                     }
                 }
@@ -122,4 +164,36 @@ class AddTaskViewController: UIViewController {
         dismissVC()
     }
     
+}
+
+
+// MARK: TableView
+
+extension AddTaskViewController: UITableViewDelegate, UITableViewDataSource {
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return lists.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: CategoryTableViewCell.identifier,
+                                                 for: indexPath) as! CategoryTableViewCell
+        
+        cell.configure(with: lists[indexPath.row],
+                       and: taskModel != nil ? lists[indexPath.row].id == taskModel?.list_id : indexPath.row == 0)
+        
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 46
+    }
 }
