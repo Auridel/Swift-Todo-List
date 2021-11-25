@@ -7,6 +7,7 @@
 
 import UIKit
 
+/// Main View Controller - Allows user manage tasks
 class MainViewController: UIViewController {
     
     private var listsModels = [ListModel]()
@@ -49,13 +50,14 @@ class MainViewController: UIViewController {
     // MARK: Actions
     
     @objc private func didTapAddTaskButton() {
-        
+        let addTaskVC = AddTaskViewController()
+        navigationController?.pushViewController(addTaskVC, animated: true)
     }
     
     //MARK: Common
     
     private func configureView() {
-        navigationItem.title = "Задачи"
+        navigationItem.title = "My Tasks"
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "cube.transparent"),
                                                             style: .plain,
@@ -83,7 +85,7 @@ class MainViewController: UIViewController {
         let list = listsModels[listIndex]
         let insertIndex = task.checked ? list.todos.count - 1 : 0
         list.todos.remove(at: taskIndex)
-        list.todos.insert(task, at: insertIndex);
+        list.todos.insert(task, at: insertIndex)
     }
 }
 
@@ -118,16 +120,45 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         
         let list = listsModels[indexPath.section]
         let task = list.todos[indexPath.row]
-        let insertIndexPath = IndexPath(row: task.checked ? list.todos.count - 1 : 0, section: indexPath.section)
+        let insertIndexPath = IndexPath(row: task.checked ? 0 : list.todos.count - 1, section: indexPath.section)
         
         task.checked = !task.checked
         tableView.reloadRows(at: [indexPath], with: .automatic)
         
         moveTaskByCompletion(task, with: indexPath.section, and: indexPath.row)
-        tableView.moveRow(at: indexPath, to: insertIndexPath)
+        DispatchQueue.main.async {
+            tableView.moveRow(at: indexPath, to: insertIndexPath)
+        }
+        
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return Constants.shared.taskHeight
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let task = listsModels[indexPath.section].todos[indexPath.row]
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
+            ApiManager.shared.removeTodo(for: task.list_id, and: task.id) { isSuccess in
+                if isSuccess {
+                    self.listsModels[indexPath.section].todos.remove(at: indexPath.row)
+                    DispatchQueue.main.async {
+                        tableView.deleteRows(at: [indexPath], with: .automatic)
+                    }
+                }
+            }
+        }
+        
+        return UISwipeActionsConfiguration(actions: [deleteAction])
+    }
+    
+    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let task = listsModels[indexPath.section].todos[indexPath.row]
+        let editAction = UIContextualAction(style: .normal, title: "Edit") { _, _, isDone in
+            print("Edit")
+            isDone(true)
+        }
+        editAction.backgroundColor = .systemBlue
+        return UISwipeActionsConfiguration(actions: [editAction])
     }
 }

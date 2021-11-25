@@ -138,7 +138,7 @@ public class ApiManager {
         AF.request("\(baseURL)/list/\(listId)/todo/\(todoId)",
                    method: .delete)
             .validate()
-            .responseJSON { dataResponse in
+            .response { dataResponse in
                 switch dataResponse.result {
                 case .success:
                     guard let completion = completion else {

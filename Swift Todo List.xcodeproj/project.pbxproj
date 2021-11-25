@@ -21,7 +21,6 @@
 		F8240D08274AD4770051C30B /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8240D07274AD4770051C30B /* Extensions.swift */; };
 		F8642C22274C107C0084C392 /* ListSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8642C21274C107C0084C392 /* ListSectionHeaderView.swift */; };
 		F8642C24274C16630084C392 /* TaskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8642C23274C16630084C392 /* TaskTableViewCell.swift */; };
-		F8642C2C274C35A30084C392 /* StatusSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8642C2B274C35A30084C392 /* StatusSeparatorView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,7 +42,6 @@
 		F8240D07274AD4770051C30B /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		F8642C21274C107C0084C392 /* ListSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListSectionHeaderView.swift; sourceTree = "<group>"; };
 		F8642C23274C16630084C392 /* TaskTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTableViewCell.swift; sourceTree = "<group>"; };
-		F8642C2B274C35A30084C392 /* StatusSeparatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusSeparatorView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,7 +139,6 @@
 				F8240CF9274AA39E0051C30B /* Storyboards */,
 				F8240D04274AB91D0051C30B /* ManageListsViewController.swift */,
 				F8642C21274C107C0084C392 /* ListSectionHeaderView.swift */,
-				F8642C2B274C35A30084C392 /* StatusSeparatorView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -285,7 +282,6 @@
 				F8240CFF274AB8C50051C30B /* AddTaskViewController.swift in Sources */,
 				F8240D08274AD4770051C30B /* Extensions.swift in Sources */,
 				F8240CE6274AA3320051C30B /* MainViewController.swift in Sources */,
-				F8642C2C274C35A30084C392 /* StatusSeparatorView.swift in Sources */,
 				F8240CE2274AA3320051C30B /* AppDelegate.swift in Sources */,
 				F8240CE4274AA3320051C30B /* SceneDelegate.swift in Sources */,
 				F8240CFD274AB63D0051C30B /* Models.swift in Sources */,
