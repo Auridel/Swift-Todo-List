@@ -8,7 +8,7 @@
 import UIKit
 
 enum TaskActionType {
-    case create(task: TodoModel), update(task: TodoModel)
+    case create(task: TodoModel), update(task: TodoModel, taskToRemove: TodoModel?)
 }
 
 protocol AddTaskViewControllerDelegate: AnyObject {
@@ -49,6 +49,8 @@ class AddTaskViewController: UIViewController {
         return tableView
     }()
     
+    // MARK: Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -67,6 +69,8 @@ class AddTaskViewController: UIViewController {
         
         configureViews()
     }
+    
+    // MARK: Common
     
     private func configureViews() {
         taskTextField.frame = CGRect(x: 16,
@@ -102,6 +106,12 @@ class AddTaskViewController: UIViewController {
     public func configure(with model: TodoModel?, and lists: [ListModel]) {
         self.taskModel = model
         self.lists = lists
+        if let model = model {
+            selectedListId = model.list_id
+            taskTextField.text = model.text
+        } else if lists.count > 0 {
+            selectedListId = lists[0].id
+        }
     }
     
     private func dismissVC() {
@@ -115,7 +125,11 @@ class AddTaskViewController: UIViewController {
     }
     
     @objc private func didTapDoneButton(){
-        if taskModel != nil {
+        // TODO: Remove logs
+        print(taskTextField.text)
+        print(selectedListId)
+        print(taskTextField.text?.isEmpty)
+        if taskModel == nil {
             guard let text = taskTextField.text,
                   !text.isEmpty,
                   let listId = selectedListId
@@ -131,6 +145,7 @@ class AddTaskViewController: UIViewController {
                 }
             }
         } else {
+            print("dadasdasasda232131231231")
             guard let text = taskTextField.text,
                   !text.isEmpty,
                   let listId = selectedListId,
@@ -147,16 +162,19 @@ class AddTaskViewController: UIViewController {
                                                 with: text,
                                                 and: false) { [weak self] todo in
                     if let todo = todo, let self = self {
-                        self.delegate?.completeTask(with: .create(task: todo))
+                        print("fdsfdsfds")
+                        self.delegate?.completeTask(with: .update(task: todo,
+                                                                  taskToRemove: taskModel))
                     }
                 }
             } else {
                 ApiManager.shared.editTodo(for: listId,
                                               and: taskModel.id,
                                               with: text,
-                                              and: taskModel.checked) {[weak self] todo in
+                                              and: taskModel.checked) { [weak self] todo in
                     if let todo = todo, let self = self {
-                        self.delegate?.completeTask(with: .update(task: todo))
+                        self.delegate?.completeTask(with: .update(task: todo,
+                                                                  taskToRemove: nil))
                     }
                 }
             }
@@ -180,17 +198,27 @@ extension AddTaskViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let list = lists[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: CategoryTableViewCell.identifier,
                                                  for: indexPath) as! CategoryTableViewCell
         
-        cell.configure(with: lists[indexPath.row],
-                       and: taskModel != nil ? lists[indexPath.row].id == taskModel?.list_id : indexPath.row == 0)
+        cell.configure(with: list,
+                       and: selectedListId == list.id )
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        let index = lists.firstIndex { $0.id == selectedListId }
+        guard let index = index else { return }
+        selectedListId = lists[indexPath.row].id
+        DispatchQueue.main.async {
+            self.tableView.reloadRows(at: [indexPath, IndexPath(row: index, section: 0)],
+                                      with: .automatic)
+        }
+        
+        
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

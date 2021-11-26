@@ -87,7 +87,7 @@ public class ApiManager {
     }
     
     public func createTodo(for listId: Int, with text: String, and checked: Bool, completion: @escaping ((TodoModel?) -> Void)) {
-        AF.request("\(baseURL)/list/\(listId)",
+        AF.request("\(baseURL)/list/\(listId)/todo",
                    method: .post,
                    parameters: ["text": text, "checked": checked])
             .validate()

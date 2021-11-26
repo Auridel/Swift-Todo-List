@@ -57,9 +57,9 @@ class CategoryTableViewCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-//        isItemSelected = false
-//        listModel = nil
-//        listLabel.text = nil
+        isItemSelected = false
+        listModel = nil
+        listLabel.text = nil
     }
     
     private func configureViews() {
@@ -76,11 +76,11 @@ class CategoryTableViewCell: UITableViewCell {
     }
     
     public func configure(with list: ListModel, and selected: Bool) {
-        print(list.title)
         listModel = list
         isItemSelected = selected
         listLabel.text = list.title
-        listAccessory.image = UIImage(systemName: selected ? Constants.shared.selectedImg : Constants.shared.image)
+        listAccessory.image = UIImage(systemName: selected ?
+                                      Constants.shared.selectedImg : Constants.shared.image)
         listAccessory.tintColor = selected ? Constants.shared.selectedColor : Constants.shared.color
     }
 }

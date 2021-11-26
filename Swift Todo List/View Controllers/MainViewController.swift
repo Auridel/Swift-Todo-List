@@ -52,6 +52,7 @@ class MainViewController: UIViewController {
     @objc private func didTapAddTaskButton() {
         let addTaskVC = AddTaskViewController()
         addTaskVC.configure(with: nil, and: listsModels)
+        addTaskVC.delegate = self
         navigationController?.pushViewController(addTaskVC, animated: true)
     }
     
@@ -72,7 +73,9 @@ class MainViewController: UIViewController {
     }
     
     private func fetchModels() {
-        
+        guard listsModels.count == 0 else {
+            return
+        }
         ApiManager.shared.getLists { models in
             DispatchQueue.main.async {
                 self.listsModels = models
@@ -159,11 +162,57 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         let editAction = UIContextualAction(style: .normal, title: "Edit") { _, _, isDone in
             let addTaskVC = AddTaskViewController()
             addTaskVC.configure(with: task, and: self.listsModels)
+            addTaskVC.delegate = self
             self.navigationController?.pushViewController(addTaskVC,
-                                                     animated: true)
+                                                          animated: true)
             isDone(true)
         }
         editAction.backgroundColor = .systemBlue
         return UISwipeActionsConfiguration(actions: [editAction])
     }
+}
+
+// MARK: AddTaskVC Delegate
+
+extension MainViewController: AddTaskViewControllerDelegate {
+    
+    func completeTask(with actionType: TaskActionType) {
+        print("delegate")
+        switch actionType {
+        case .create(let task):
+            print("case create")
+            guard let targetIdx = listsModels.firstIndex(where: { $0.id == task.list_id }) else { return }
+            let list = listsModels[targetIdx]
+            list.todos.insert(task, at: 0)
+            DispatchQueue.main.async {
+                self.tableView.reloadSections([targetIdx], with: .automatic)
+            }
+        case .update(let task, let taskToRemove):
+            print("case update")
+            print(task)
+            print(String(describing: taskToRemove))
+            if let taskToRemove = taskToRemove {
+                guard let removeListIdx = listsModels.firstIndex(where: { $0.id == taskToRemove.list_id }),
+                      let insertListIdx = listsModels.firstIndex(where: { $0.id == task.list_id })
+                else { return }
+                let insertList = listsModels[insertListIdx]
+                listsModels[removeListIdx].todos.removeAll(where: {$0.id == taskToRemove.id})
+                insertList.todos.insert(task, at: task.checked ? insertList.todos.count : 0)
+                print("fsdfsdfdsf")
+                DispatchQueue.main.async {
+                    self.tableView.reloadSections([removeListIdx, insertListIdx], with: .automatic)
+                }
+            } else {
+                guard let listIdx = listsModels.firstIndex(where: {$0.id == task.list_id})
+                else { return }
+                let list = listsModels[listIdx]
+                list.todos.removeAll(where: {$0.id == task.id})
+                list.todos.insert(task, at: task.checked ? list.todos.count : 0)
+                DispatchQueue.main.async {
+                    self.tableView.reloadSections([listIdx], with: .automatic)
+                }
+            }
+        }
+    }
+    
 }
