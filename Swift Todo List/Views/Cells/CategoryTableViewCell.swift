@@ -43,6 +43,7 @@ class CategoryTableViewCell: UITableViewCell {
         
         contentView.addSubview(listLabel)
         contentView.addSubview(listAccessory)
+        contentView.layer.masksToBounds = true
     }
     
     required init?(coder: NSCoder) {

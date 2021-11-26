@@ -46,6 +46,7 @@ class AddTaskViewController: UIViewController {
         let tableView = UITableView()
         tableView.register(CategoryTableViewCell.self,
                            forCellReuseIdentifier: CategoryTableViewCell.identifier)
+        tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
         return tableView
     }()
     
@@ -125,10 +126,6 @@ class AddTaskViewController: UIViewController {
     }
     
     @objc private func didTapDoneButton(){
-        // TODO: Remove logs
-        print(taskTextField.text)
-        print(selectedListId)
-        print(taskTextField.text?.isEmpty)
         if taskModel == nil {
             guard let text = taskTextField.text,
                   !text.isEmpty,
@@ -145,7 +142,6 @@ class AddTaskViewController: UIViewController {
                 }
             }
         } else {
-            print("dadasdasasda232131231231")
             guard let text = taskTextField.text,
                   !text.isEmpty,
                   let listId = selectedListId,
@@ -162,7 +158,6 @@ class AddTaskViewController: UIViewController {
                                                 with: text,
                                                 and: false) { [weak self] todo in
                     if let todo = todo, let self = self {
-                        print("fdsfdsfds")
                         self.delegate?.completeTask(with: .update(task: todo,
                                                                   taskToRemove: taskModel))
                     }

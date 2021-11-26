@@ -126,6 +126,11 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         let task = list.todos[indexPath.row]
         let insertIndexPath = IndexPath(row: task.checked ? 0 : list.todos.count - 1, section: indexPath.section)
         
+        ApiManager.shared.editTodo(for: task.list_id,
+                                      and: task.id,
+                                      with: task.text,
+                                      and: !task.checked, completion: nil)
+        
         task.checked = !task.checked
         tableView.reloadRows(at: [indexPath], with: .automatic)
         
@@ -177,10 +182,8 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
 extension MainViewController: AddTaskViewControllerDelegate {
     
     func completeTask(with actionType: TaskActionType) {
-        print("delegate")
         switch actionType {
         case .create(let task):
-            print("case create")
             guard let targetIdx = listsModels.firstIndex(where: { $0.id == task.list_id }) else { return }
             let list = listsModels[targetIdx]
             list.todos.insert(task, at: 0)
@@ -188,9 +191,6 @@ extension MainViewController: AddTaskViewControllerDelegate {
                 self.tableView.reloadSections([targetIdx], with: .automatic)
             }
         case .update(let task, let taskToRemove):
-            print("case update")
-            print(task)
-            print(String(describing: taskToRemove))
             if let taskToRemove = taskToRemove {
                 guard let removeListIdx = listsModels.firstIndex(where: { $0.id == taskToRemove.list_id }),
                       let insertListIdx = listsModels.firstIndex(where: { $0.id == task.list_id })
@@ -198,7 +198,6 @@ extension MainViewController: AddTaskViewControllerDelegate {
                 let insertList = listsModels[insertListIdx]
                 listsModels[removeListIdx].todos.removeAll(where: {$0.id == taskToRemove.id})
                 insertList.todos.insert(task, at: task.checked ? insertList.todos.count : 0)
-                print("fsdfsdfdsf")
                 DispatchQueue.main.async {
                     self.tableView.reloadSections([removeListIdx, insertListIdx], with: .automatic)
                 }

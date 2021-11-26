@@ -110,7 +110,7 @@ public class ApiManager {
             }
     }
     
-    public func editTodo(for listId: Int, and todoId: Int, with text: String, and checked: Bool, completion: @escaping ((TodoModel?) -> Void)) {
+    public func editTodo(for listId: Int, and todoId: Int, with text: String, and checked: Bool, completion: ((TodoModel?) -> Void)?) {
         AF.request("\(baseURL)/list/\(listId)/todo/\(todoId)",
                    method: .patch,
                    parameters: ["text": text, "checked": checked])
@@ -122,13 +122,22 @@ public class ApiManager {
                     let jsonDecoder = JSONDecoder()
                     do {
                         let model = try jsonDecoder.decode(TodoModel.self, from: jsonData)
+                        guard let completion = completion else {
+                            return
+                        }
                         completion(model)
                     } catch let error {
                         print(error)
+                        guard let completion = completion else {
+                            return
+                        }
                         completion(nil)
                     }
                 case .failure(let error):
                     print(error)
+                    guard let completion = completion else {
+                        return
+                    }
                     completion(nil)
                 }
             }
