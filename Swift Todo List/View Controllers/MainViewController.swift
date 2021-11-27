@@ -18,6 +18,7 @@ class MainViewController: UIViewController {
         static let shared = Constants()
         
         let taskHeight: CGFloat = 46
+        let fabSize: CGFloat = 60
     }
     
     private let tableView: UITableView = {
@@ -25,6 +26,23 @@ class MainViewController: UIViewController {
         tableView.register(TaskTableViewCell.self,
                            forCellReuseIdentifier: TaskTableViewCell.identifier)
         return tableView
+    }()
+    
+    private let floatingButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0,
+                                            y: 0,
+                                            width: Constants.shared.fabSize,
+                                            height: Constants.shared.fabSize))
+        button.layer.cornerRadius = 30
+        button.layer.shadowRadius = 10
+        button.layer.shadowOpacity = 0.3
+        button.backgroundColor = .systemBlue
+        button.setImage(UIImage(systemName: "plus",
+                                withConfiguration: UIImage.SymbolConfiguration(pointSize: 24,
+                                                                               weight: .medium)),
+                        for: .normal)
+        button.tintColor = .white
+        return button
     }()
     
     // MARK: Lifecycle
@@ -45,6 +63,10 @@ class MainViewController: UIViewController {
         super.viewDidLayoutSubviews()
         
         tableView.frame = view.bounds
+        floatingButton.frame = CGRect(x: view.width - Constants.shared.fabSize - 8,
+                                      y: view.height - Constants.shared.fabSize - 8 - view.safeAreaInsets.bottom,
+                                      width: Constants.shared.fabSize,
+                                      height: Constants.shared.fabSize)
     }
     
     // MARK: Actions
@@ -54,6 +76,16 @@ class MainViewController: UIViewController {
         addTaskVC.configure(with: nil, and: listsModels)
         addTaskVC.delegate = self
         navigationController?.pushViewController(addTaskVC, animated: true)
+    }
+    
+    @objc private func didTapFloatingButton() {
+        let manageListsVC = ManageListsViewController()
+        if let bottomSheet = manageListsVC.presentationController as? UISheetPresentationController {
+            bottomSheet.detents = [.medium()]
+        }
+        manageListsVC.configure(with: listsModels)
+        
+        present(manageListsVC, animated: true)
     }
     
     //MARK: Common
@@ -68,8 +100,12 @@ class MainViewController: UIViewController {
         
         view.backgroundColor = .systemBackground
         view.addSubview(tableView)
+        view.addSubview(floatingButton)
         tableView.delegate = self
         tableView.dataSource = self
+        floatingButton.addTarget(self,
+                                 action: #selector(didTapFloatingButton),
+                                 for: .touchUpInside)
     }
     
     private func fetchModels() {
