@@ -7,7 +7,15 @@
 
 import UIKit
 
+protocol ManageListsViewControllerDelegate: AnyObject {
+    func deleteList(listId: Int)
+    
+    func createList(list: ListModel)
+}
+
 class ManageListsViewController: UIViewController {
+    
+    weak var delegate: ManageListsViewControllerDelegate?
     
     private var lists = [ListModel]()
     
@@ -28,6 +36,9 @@ class ManageListsViewController: UIViewController {
         button.tintColor = color
         button.setImage(UIImage(systemName: "plus"), for: .normal)
         button.setTitle("New Category", for: .normal)
+        button.addTarget(self,
+                         action: #selector(didTapAddNewList),
+                         for: .touchUpInside)
 //        button.transform = CGAffineTransform(scaleX: -1, y: 1)
 //        button.titleLabel?.transform = CGAffineTransform(scaleX: -1, y: 1)
 //        button.semanticContentAttribute = .forceRightToLeft
@@ -61,6 +72,29 @@ class ManageListsViewController: UIViewController {
         
         configureButton()
     }
+    
+    // MARK: Actions
+    
+    @objc private func didTapAddNewList() {
+        let alert = UIAlertController(title: "Add New Category",
+                                      message: "Please enter category name",
+                                      preferredStyle: .alert)
+        alert.addTextField { textField in
+            
+        }
+        alert.addAction(UIAlertAction(title: "Cancel",
+                                      style: .cancel,
+                                      handler: nil))
+        alert.addAction(UIAlertAction(title: "Done",
+                                      style: .default,
+                                      handler: { _ in
+            guard let title = alert.textFields?.first?.text, !title.isEmpty else {
+                return
+            }
+            self.createList(with: title)
+        }))
+        present(alert, animated: true)
+    }
 
     // MARK: Common
     
@@ -77,6 +111,49 @@ class ManageListsViewController: UIViewController {
     
     public func configure(with lists: [ListModel]) {
         self.lists = lists
+    }
+    
+    private func showConfirmDeleteAlert(for list: ListModel, at indexPath: IndexPath) {
+        let alert = UIAlertController(title: "Delete Category",
+                                      message: "Do you really want to delete \(list.title)?",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel",
+                                      style: .cancel,
+                                      handler: nil))
+        alert.addAction(UIAlertAction(title: "Delete",
+                                      style: .destructive,
+                                      handler: { _ in
+            self.deleteList(list, at: indexPath)
+        }))
+        present(alert, animated: true)
+    }
+    
+    private func deleteList(_ list: ListModel, at indexPath: IndexPath) {
+        ApiManager.shared.deleteList(with: list.id) { [weak self] isDone in
+            if isDone, let self = self {
+                self.lists.remove(at: indexPath.row)
+                DispatchQueue.main.async {
+                    self.tableView.deleteRows(at: [indexPath],
+                                              with: .automatic)
+                }
+                self.delegate?.deleteList(listId: list.id)
+                self.dismissVC()
+            }
+        }
+    }
+    
+    private func createList(with title: String) {
+        ApiManager.shared.createList(with: title) { [weak self] model in
+            guard let model = model, let self = self else {
+                return
+            }
+            self.delegate?.createList(list: model)
+            self.dismissVC()
+        }
+    }
+    
+    private func dismissVC() {
+        dismiss(animated: true, completion: nil)
     }
     
 }
@@ -112,8 +189,8 @@ extension ManageListsViewController: UITableViewDelegate, UITableViewDataSource 
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
-        //TODO: delete logic
+        let list = lists[indexPath.row]
+        showConfirmDeleteAlert(for: list, at: indexPath)
     }
     
 }

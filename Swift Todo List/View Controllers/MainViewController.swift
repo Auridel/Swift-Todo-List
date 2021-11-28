@@ -84,6 +84,8 @@ class MainViewController: UIViewController {
             bottomSheet.detents = [.medium()]
         }
         manageListsVC.configure(with: listsModels)
+        manageListsVC.delegate = self
+    
         
         present(manageListsVC, animated: true)
     }
@@ -213,9 +215,24 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-// MARK: AddTaskVC Delegate
+// MARK: Delegate
 
-extension MainViewController: AddTaskViewControllerDelegate {
+extension MainViewController: AddTaskViewControllerDelegate, ManageListsViewControllerDelegate {
+    
+    func deleteList(listId: Int) {
+        self.listsModels.removeAll { $0.id == listId }
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+    }
+    
+    func createList(list: ListModel) {
+        listsModels.append(list)
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+    }
+    
     
     func completeTask(with actionType: TaskActionType) {
         switch actionType {

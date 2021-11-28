@@ -15,6 +15,16 @@ public class ListModel: Codable {
     let updated_at: String
     var todos: [TodoModel]
     
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.id = try container.decodeWrapper(key: .id, defaultValue: -1)
+        self.title = try container.decodeWrapper(key: .title, defaultValue: "")
+        self.candidate_id = try container.decodeWrapper(key: .candidate_id, defaultValue: -1)
+        self.created_at = try container.decodeWrapper(key: .created_at, defaultValue: "")
+        self.updated_at = try container.decodeWrapper(key: .updated_at, defaultValue: "")
+        self.todos = try container.decodeWrapper(key: .todos, defaultValue: [])
+    }
 }
 
 public class TodoModel: Codable {

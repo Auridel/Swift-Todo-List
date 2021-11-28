@@ -41,7 +41,31 @@ public class ApiManager {
         completion(models)
     }
     
-    public func deleteList(with id: String, completion: ((Bool) -> Void)?) {
+    public func createList(with title: String, completion: @escaping ((ListModel?) -> Void)) {
+        AF.request("\(baseURL)/list",
+                   method: .post,
+                   parameters: ["title": title])
+            .validate()
+            .responseJSON { dataResponse in
+                switch dataResponse.result {
+                case .success:
+                    guard let jsonData = dataResponse.data else { return }
+                    let jsonDecoder = JSONDecoder()
+                    do {
+                        let model = try jsonDecoder.decode(ListModel.self, from: jsonData)
+                        completion(model)
+                    } catch let error {
+                        print(error)
+                        completion(nil)
+                    }
+                case .failure(let error):
+                    print(error)
+                    completion(nil)
+                }
+            }
+    }
+    
+    public func deleteList(with id: Int, completion: ((Bool) -> Void)?) {
         AF.request("\(baseURL)/list/\(id)",
                    method: .delete)
             .validate()

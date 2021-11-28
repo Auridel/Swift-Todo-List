@@ -30,6 +30,7 @@ class AddTaskViewController: UIViewController {
         let textField = UITextField()
         textField.placeholder = "Task Name"
         textField.font = .systemFont(ofSize: 22)
+        textField.textColor = .label.withAlphaComponent(0.87)
         return textField
     }()
     
@@ -85,7 +86,7 @@ class AddTaskViewController: UIViewController {
         tableView.frame = CGRect(x: view.left,
                                  y: categoryLabel.bottom + 16,
                                  width: view.width,
-                                 height: view.width - categoryLabel.bottom - 16)
+                                 height: view.height - categoryLabel.bottom - 16)
     }
     
     private func configureNavigationBar(){
